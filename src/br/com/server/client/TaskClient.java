@@ -16,9 +16,7 @@ public class TaskClient {
                 Scanner scanner = new Scanner(System.in);
                 while (scanner.hasNextLine()) {
                     String line = scanner.nextLine();
-                    if (line.trim().equals("")) {
-                        break;
-                    }
+                    if (line.trim().equals("")) break;
                     printStream.println(line);
                 }
                 printStream.close();
