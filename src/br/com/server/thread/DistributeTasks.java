@@ -1,9 +1,10 @@
 package br.com.server.thread;
 
 import java.net.Socket;
+import java.util.Scanner;
 
 public class DistributeTasks implements Runnable {
-    private Socket socket;
+    private final Socket socket;
 
     public DistributeTasks(Socket socket) {
         this.socket = socket;
@@ -11,10 +12,15 @@ public class DistributeTasks implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("Distributing tasks to " + socket);
         try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
+            System.out.println("Distributing tasks to " + socket);
+            Scanner scanner = new Scanner(socket.getInputStream());
+            while (scanner.hasNextLine()) {
+                String command = scanner.nextLine();
+                System.out.println(command);
+            }
+            scanner.close();
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

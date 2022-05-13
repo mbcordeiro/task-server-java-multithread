@@ -1,6 +1,7 @@
 package br.com.server.client;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -10,10 +11,15 @@ public class TaskClient {
 
         System.out.println("Connection on...");
 
+        PrintStream printStream = new PrintStream(socket.getOutputStream());
+        printStream.println("Commnad 1");
+
         Scanner scanner = new Scanner(System.in);
 
         scanner.nextLine();
 
         socket.close();
+        printStream.close();
+        scanner.close();
     }
 }
