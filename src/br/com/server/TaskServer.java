@@ -17,7 +17,7 @@ public class TaskServer {
     public TaskServer() throws IOException {
         System.out.println("--- Server staring... ---");
         this.server = new ServerSocket(8282);
-        this.threadPool = Executors.newCachedThreadPool();
+        this.threadPool = Executors.newFixedThreadPool(4);
         this.isRunning = true;
     }
 
@@ -26,7 +26,7 @@ public class TaskServer {
             try {
                 Socket socket = server.accept();
                 System.out.println("Accepting new client in port" + socket.getPort());
-                DistributeTasks distributeTasks = new DistributeTasks(socket, this);
+                DistributeTasks distributeTasks = new DistributeTasks(threadPool, socket, this);
                 threadPool.execute(distributeTasks);
             } catch (SocketException e) {
                 System.out.println(e.getMessage() + " isRunning=" + isRunning);

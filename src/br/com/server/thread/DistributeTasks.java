@@ -1,16 +1,21 @@
 package br.com.server.thread;
 
 import br.com.server.TaskServer;
+import br.com.server.command.CommandC1;
+import br.com.server.command.CommandC2;
 
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
 
 public class DistributeTasks implements Runnable {
+    private final ExecutorService threadPool;
     private final Socket socket;
     private final TaskServer taskServer;
 
-    public DistributeTasks(Socket socket, TaskServer taskServer) {
+    public DistributeTasks(ExecutorService threadPool, Socket socket, TaskServer taskServer) {
+        this.threadPool = threadPool;
         this.socket = socket;
         this.taskServer = taskServer;
     }
@@ -26,10 +31,27 @@ public class DistributeTasks implements Runnable {
                 System.out.println(command);
 
                 switch (command) {
-                    case "c1" -> printStream.println("Confirmation command c1");
-                    case "c2" -> printStream.println("Confirmation command c2");
-                    case "shuttingdown" -> taskServer.shutdown();
-                    default -> printStream.println("Command not found");
+                    case "c1" -> {
+                        printStream.println("Confirmation command c1");
+                        CommandC1 commandC1 = new CommandC1(printStream);
+                        threadPool.execute(commandC1);
+                        break;
+                    }
+                    case "c2" -> {
+                        printStream.println("Confirmation command c2");
+                        CommandC2 commandC2 = new CommandC2(printStream);
+                        threadPool.execute(commandC2);
+                        break;
+                    }
+                    case "shutdown" -> {
+                        printStream.println("Shutdown server");
+                        taskServer.shutdown();
+                        break;
+                    }
+                    default -> {
+                        printStream.println("Command not found");
+                        break;
+                    }
                 }
             }
             scanner.close();
