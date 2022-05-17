@@ -8,21 +8,22 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TaskServer {
     private final ServerSocket server;
     private final ExecutorService threadPool;
-    private boolean isRunning;
+    private AtomicBoolean isRunning;
 
     public TaskServer() throws IOException {
         System.out.println("--- Server staring... ---");
         this.server = new ServerSocket(8282);
-        this.threadPool = Executors.newFixedThreadPool(4);
-        this.isRunning = true;
+        this.threadPool = Executors.newFixedThreadPool(4, new ThreadFactoryServer());
+        this.isRunning = new AtomicBoolean(true);
     }
 
     public void run() throws IOException {
-        while (isRunning) {
+        while (isRunning.get()) {
             try {
                 Socket socket = server.accept();
                 System.out.println("Accepting new client in port" + socket.getPort());
@@ -36,7 +37,7 @@ public class TaskServer {
 
     public void shutdown() throws IOException {
         System.out.println("Shutting down the server");
-        isRunning = false;
+        isRunning = new AtomicBoolean(false);
         server.close();
         threadPool.shutdown();
     }

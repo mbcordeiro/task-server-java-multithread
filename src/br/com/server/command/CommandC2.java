@@ -15,11 +15,11 @@ public class CommandC2 implements Runnable {
         System.out.println("Execute command c2");
 
         try {
-            Thread.sleep(20000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e.getMessage());
         }
 
-        printStream.println("Command c2 execute success!");
+        throw new RuntimeException("Exception in command 2");
     }
 }
