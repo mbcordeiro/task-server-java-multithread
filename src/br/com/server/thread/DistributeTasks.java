@@ -8,6 +8,7 @@ import br.com.server.command.CommandC2DBAccess;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -15,11 +16,13 @@ public class DistributeTasks implements Runnable {
     private final ExecutorService threadPool;
     private final Socket socket;
     private final TaskServer taskServer;
+    private BlockingQueue<String> queue;
 
-    public DistributeTasks(ExecutorService threadPool, Socket socket, TaskServer taskServer) {
+    public DistributeTasks(ExecutorService threadPool, Socket socket, TaskServer taskServer, BlockingQueue<String> queue) {
         this.threadPool = threadPool;
         this.socket = socket;
         this.taskServer = taskServer;
+        this.queue = queue;
     }
 
     @Override
@@ -46,6 +49,11 @@ public class DistributeTasks implements Runnable {
                         Future<String> futureWS = threadPool.submit(commandC2CallWS);
                         Future<String> futureDB = threadPool.submit(commandC2DBAccess);
                         this.threadPool.submit(new ResultFuture(futureWS, futureDB, printStream));
+                        break;
+                    }
+                    case "c3" -> {
+                        queue.put(command);
+                        printStream.println("Add queue command c3");
                         break;
                     }
                     case "shutdown" -> {
