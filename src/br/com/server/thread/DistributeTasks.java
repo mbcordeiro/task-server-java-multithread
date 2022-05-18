@@ -2,12 +2,14 @@ package br.com.server.thread;
 
 import br.com.server.TaskServer;
 import br.com.server.command.CommandC1;
-import br.com.server.command.CommandC2;
+import br.com.server.command.CommandC2CallWS;
+import br.com.server.command.CommandC2DBAccess;
 
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public class DistributeTasks implements Runnable {
     private final ExecutorService threadPool;
@@ -39,8 +41,10 @@ public class DistributeTasks implements Runnable {
                     }
                     case "c2" -> {
                         printStream.println("Confirmation command c2");
-                        CommandC2 commandC2 = new CommandC2(printStream);
-                        threadPool.execute(commandC2);
+                        CommandC2CallWS commandC2CallWS = new CommandC2CallWS(printStream);
+                        CommandC2DBAccess commandC2DBAccess = new CommandC2DBAccess(printStream);
+                        Future<String> futureWS = threadPool.submit(commandC2CallWS);
+                        Future<String> futureDB = threadPool.submit(commandC2DBAccess);
                         break;
                     }
                     case "shutdown" -> {
