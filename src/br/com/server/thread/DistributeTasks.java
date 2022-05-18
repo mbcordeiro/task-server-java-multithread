@@ -45,6 +45,7 @@ public class DistributeTasks implements Runnable {
                         CommandC2DBAccess commandC2DBAccess = new CommandC2DBAccess(printStream);
                         Future<String> futureWS = threadPool.submit(commandC2CallWS);
                         Future<String> futureDB = threadPool.submit(commandC2DBAccess);
+                        this.threadPool.submit(new ResultFuture(futureWS, futureDB, printStream));
                         break;
                     }
                     case "shutdown" -> {

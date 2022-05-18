@@ -15,7 +15,7 @@ public class CommandC2DBAccess implements Callable<String> {
     public String call() throws Exception {
         System.out.println("Server to receive command c2 - DB");
         printStream.println("Process command c2 - DB");
-        Thread.sleep(20000);
+        Thread.sleep(15000);
         int number = new Random().nextInt(100) + 1;
         System.out.println("Server finish command c2 - DB");
         return Integer.toString(number);
